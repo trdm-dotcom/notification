@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid';
+import 'dotenv/config';
 
 const nodeId = uuid();
 
@@ -17,7 +18,15 @@ let Config = {
     },
     app: {
         template:{
-            dir: 'templates/'
+            dir: 'template/'
+        },
+        email:{
+            host: 'smtp.gmail.com',
+            port: 587,
+            auth: {
+                user: process.env.EMAIL_APP,
+                pass: process.env.EMAIL_APP_PASSWORD
+            }
         }
     },
     topic: {

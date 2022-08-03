@@ -1,24 +1,27 @@
 import 'reflect-metadata';
-import Config from './Config';
+import config from './Config';
 import RequestHandler from './consumer/RequestHandler';
 import { Logger, Kafka } from 'common';
 import { Container } from 'typedi';
 
-Logger.create(Config.logger.config, true);
+Logger.create(config.logger.config, true);
 Logger.info('Starting...');
 
 async function init() {
     Logger.info('run service notification');
-    const topicConf = {
-        ...Config.kafkaTopicOptions,
-        'auto.offset.reset': 'earliest',
-    };
-    Kafka.create(Config, Config.kafkaConsumerOptions, true, topicConf, Config.kafkaProducerOptions);
-    Kafka.createService(Kafka.getInstance(), {
-        nodeId: Config.nodeId,
-        serviceName: Config.clusterId,
-        listeningTopic: Config.clusterId,
-    });
+    await Kafka.create(
+        config,
+        true,
+        null,
+        {
+          serviceName: config.clusterId,
+          nodeId: config.nodeId,
+        },
+        config.kafkaProducerOptions,
+        {},
+        config.kafkaConsumerOptions,
+        {},
+      );
     const requestHandler = Container.get(RequestHandler);
     requestHandler.init();
 }

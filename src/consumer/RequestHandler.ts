@@ -1,9 +1,9 @@
 import { Inject, Service } from 'typedi';
-import { Errors, Kafka, NotificationMessage, MethodEnum} from 'common';
-import Config from '../Config';
+import { Errors, Kafka, NotificationMessage, MethodEnum, Logger} from 'common';
+import config from '../Config';
 import SmsService from '../service/SmsService';
 import EmailService from '../service/EmailService';
-import { ObjectMapper } from 'jackson-js';
+import { JsonParser } from 'jackson-js';
 
 @Service()
 export default class RequestHandler {
@@ -13,32 +13,33 @@ export default class RequestHandler {
     @Inject()
     private emailService: EmailService;
 
-    @Inject()
-    private objectMapper: ObjectMapper;
-
     public init() {
-        const handle: Kafka.MessageHandler = new Kafka.MessageHandler(Kafka.getInstance());
-        new Kafka.ConsumerHandler(
-            Config,
-            Config.kafkaConsumerOptions,
-            Config.requestHandlerTopics,
-            (message: any) => handle.handle(message, this.handleRequest),
-            Config.kafkaTopicOptions
+        const handle: Kafka.KafkaRequestHandler = new Kafka.KafkaRequestHandler(Kafka.getInstance());
+        Kafka.createConsumer(
+            config,
+            config.kafkaConsumerOptions,
+            config.requestHandlerTopics,
+            (message: Kafka.IKafkaMessage) => handle.handle(message, this.handleRequest),
+            config.kafkaTopicOptions
         );
     }
 
     private handleRequest: Kafka.Handle = async (message: Kafka.IMessage) => {
+        const jsonParser = new JsonParser();
         if (message == null || message.data == null) {
             return Promise.reject(new Errors.SystemError());
         } else {
-            let notificationMessage: NotificationMessage = this.objectMapper.parse<NotificationMessage>(message.data);
+            Logger.info('Endpoint received message: ', message);
+            let notificationMessage: NotificationMessage = jsonParser.transform(message.data, {
+                mainCreator: () => [NotificationMessage]
+            });            
             switch(notificationMessage.getMethod()){
                 case MethodEnum.EMAIL:
                     return this.emailService.sendEmail(notificationMessage);
                 case MethodEnum.SMS:
                     return this.smsService.sendSms(notificationMessage);
             }
+            return false;
         }
-        return false;
     };
 }

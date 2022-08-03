@@ -4,5 +4,6 @@ export default interface IEmailRequest{
     ccList?: Array<string>;
     from?: string;
     subject?: string;
-    content?: string;
+    html?: string;
+    text?: string;
 }
