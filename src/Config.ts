@@ -27,7 +27,11 @@ let Config = {
                 user: process.env.EMAIL_APP,
                 pass: process.env.EMAIL_APP_PASSWORD
             }
-        }
+        },
+    },
+    firebase: {
+        databaseURL: 'https://do-an-f2b69-default-rtdb.asia-southeast1.firebasedatabase.app',
+        authKey: 'external/do-an.json'
     },
     topic: {
         otp: 'otp',

@@ -4,6 +4,7 @@ import config from '../Config';
 import SmsService from '../service/SmsService';
 import EmailService from '../service/EmailService';
 import { JsonParser } from 'jackson-js';
+import { FirebaseService } from '../service/FirebaseService';
 
 @Service()
 export default class RequestHandler {
@@ -12,6 +13,9 @@ export default class RequestHandler {
 
     @Inject()
     private emailService: EmailService;
+
+    @Inject()
+    private firebaseService: FirebaseService;
 
     public init() {
         const handle: Kafka.KafkaRequestHandler = new Kafka.KafkaRequestHandler(Kafka.getInstance());
@@ -38,6 +42,8 @@ export default class RequestHandler {
                     return this.emailService.sendEmail(notificationMessage);
                 case MethodEnum.SMS:
                     return this.smsService.sendSms(notificationMessage);
+                case MethodEnum.FIREBASE:
+                    return this.firebaseService.pushMessage(notificationMessage);
             }
             return false;
         }

@@ -45,8 +45,7 @@ export default class EmailService {
                 } else {
                     Logger.error(`NOT EXIST HTML TEMPLATE OF ${template}`);
                 }
-                
-                let response = transporter.sendMail({
+                transporter.sendMail({
                     from: emailRequest.from,
                     to: emailRequest.toList,
                     cc: emailRequest.ccList,
@@ -54,8 +53,9 @@ export default class EmailService {
                     subject: emailRequest.subject,
                     html: emailRequest.html,
                     text: emailRequest.text,
+                }).then(response => {
+                    Logger.info('Message sent: ', response);
                 });
-                Logger.info('Message sent: ', response);
             });
         } catch (error) {
             Logger.error(error);
