@@ -9,7 +9,7 @@ import { Twilio } from "twilio";
 @Service()
 export default class SmsService{
 
-    public sendSms(notificationMessage: NotificationMessage)  {
+    public sendSms(notificationMessage: NotificationMessage, transactionId: string | number)  {
         const jsonParser = new JsonParser();
         const twilio: Twilio = new Twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
         const invalidParams = new Errors.InvalidParameterError();
@@ -26,7 +26,7 @@ export default class SmsService{
             map.forEach((templateData: Object, template: string) => {
                 let content: string | null = getTemplate(template,  templateData);
                 if(!content){
-                    Logger.error(`NOT EXIST TEMPLATE OF ${template}`);
+                    Logger.error(`${transactionId} NOT EXIST LIQUID TEMPLATE OF ${template}`);
                 }
                 smsRequest.content = content;
                 twilio.messages.create({
@@ -36,7 +36,7 @@ export default class SmsService{
                 }); 
             });
         } catch (error) {
-            
+            Logger.error(`${transactionId} error ${error}`);
         }
     } 
 }

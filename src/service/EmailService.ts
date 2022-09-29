@@ -8,7 +8,7 @@ import Config from '../Config';
 
 @Service()
 export default class EmailService {
-    public sendEmail(notificationMessage: NotificationMessage) {
+    public sendEmail(notificationMessage: NotificationMessage, transactionId: string | number) {
         const transporter = createTransport(Config.app.email);
         const jsonParser = new JsonParser();
         const invalidParams = new Errors.InvalidParameterError();
@@ -36,29 +36,35 @@ export default class EmailService {
                 if (text) {
                     emailRequest.text = text;
                 } else {
-                    Logger.error(`NOT EXIST LIQUID TEMPLATE OF ${template}`);
+                    Logger.error(`${transactionId} NOT EXIST LIQUID TEMPLATE OF ${template}`);
                 }
 
                 let html: string | null = getTemplate(`${template}.html`, templateData);
                 if (html) {
                     emailRequest.html = html;
                 } else {
-                    Logger.error(`NOT EXIST HTML TEMPLATE OF ${template}`);
+                    Logger.error(`${transactionId} NOT EXIST HTML TEMPLATE OF ${template}`);
                 }
-                transporter.sendMail({
-                    from: emailRequest.from,
-                    to: emailRequest.toList,
-                    cc: emailRequest.ccList,
-                    bcc: emailRequest.bccList,
-                    subject: emailRequest.subject,
-                    html: emailRequest.html,
-                    text: emailRequest.text,
-                }).then(response => {
-                    Logger.info('Message sent: ', response);
-                });
+                console.log(emailRequest);
+                transporter
+                    .sendMail({
+                        from: emailRequest.from,
+                        to: emailRequest.toList,
+                        cc: emailRequest.ccList,
+                        bcc: emailRequest.bccList,
+                        subject: emailRequest.subject,
+                        html: emailRequest.html,
+                        text: emailRequest.text,
+                    })
+                    .then((response) => {
+                        Logger.info(`${transactionId} message sent ${response}`);
+                    })
+                    .catch((error) => {
+                        Logger.error(`${transactionId} send email error ${error}`);
+                    });
             });
         } catch (error) {
-            Logger.error(error);
+            Logger.error(`${transactionId} error ${error}`);
         }
     }
 }
