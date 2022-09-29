@@ -36,14 +36,14 @@ export default class RequestHandler {
             Logger.info('Endpoint received message: ', message);
             let notificationMessage: NotificationMessage = jsonParser.transform(message.data, {
                 mainCreator: () => [NotificationMessage]
-            });            
+            });       
             switch(notificationMessage.getMethod()){
                 case MethodEnum.EMAIL:
-                    return this.emailService.sendEmail(notificationMessage);
+                    return this.emailService.sendEmail(notificationMessage, message.transactionId);
                 case MethodEnum.SMS:
-                    return this.smsService.sendSms(notificationMessage);
+                    return this.smsService.sendSms(notificationMessage, message.transactionId);
                 case MethodEnum.FIREBASE:
-                    return this.firebaseService.pushMessage(notificationMessage);
+                    return this.firebaseService.pushMessage(notificationMessage, message.transactionId);
             }
             return false;
         }
