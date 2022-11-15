@@ -90,14 +90,12 @@ export default class PushNotificationHandler {
         } catch (error) {
             Logger.error(`${transactionId} can not send messages to ${Config.topic.user_info}`);
             if (pushNotificationRequest.isSave) {
-                NotificationModel.create([
-                    {
-                        userId: pushNotificationRequest.userId,
-                        title: pushNotificationRequest.title,
-                        content: pushNotificationRequest.content,
-                        isRead: false,
-                    },
-                ]);
+                NotificationModel.create({
+                    userId: pushNotificationRequest.userId,
+                    title: pushNotificationRequest.title,
+                    content: pushNotificationRequest.content,
+                    isRead: false,
+                });
             }
             throw new Error(error.code);
         }
