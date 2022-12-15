@@ -3,7 +3,7 @@ import { INotification } from '../db/INotification';
 
 const NotificationSchema = new Schema<INotification>(
     {
-        userId: { type: String },
+        userId: { type: Number },
         title: {type: String},
         content: {type: String},
         isRead: {type: Boolean, default: false},

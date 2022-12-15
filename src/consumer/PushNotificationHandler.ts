@@ -14,6 +14,7 @@ import config from '../Config';
 import { IUser } from '../models/IUser';
 import IPushNotificationRequest from '../models/request/IPushNotificationRequest';
 import NotificationModel from '../models/schema/NotificationModel';
+import { Increment } from 'mongoose-auto-increment-ts';
 
 @Service()
 export default class PushNotificationHandler {
@@ -90,7 +91,9 @@ export default class PushNotificationHandler {
         } catch (error) {
             Logger.error(`${transactionId} can not send messages to ${Config.topic.user_info}`);
             if (pushNotificationRequest.isSave) {
+                const _id: number = await Increment('c_notifications');
                 NotificationModel.create({
+                    _id: _id,
                     userId: pushNotificationRequest.userId,
                     title: pushNotificationRequest.title,
                     content: pushNotificationRequest.content,
