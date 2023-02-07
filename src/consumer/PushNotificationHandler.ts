@@ -35,7 +35,7 @@ export default class PushNotificationHandler {
             let request = <IPushNotificationRequest>message.data;
             let notificationMessage: NotificationMessage = new NotificationMessage();
             notificationMessage.setMethod(MethodEnum.FIREBASE);
-            Promise.all([
+            await Promise.all([
                 this.saveMessage(request),
                 this.pushNotificationByUserName(
                     notificationMessage,
