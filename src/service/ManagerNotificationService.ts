@@ -12,7 +12,10 @@ import IRemarkNotificationRequest from '../models/request/IRemarkNotificationReq
 
 @Service()
 export default class ManagerNotificationService {
-    public async remarkNotification(request: IRemarkNotificationRequest, transactionId: string | number) {
+    public async remarkNotification(
+        request: IRemarkNotificationRequest,
+        transactionId: string | number
+    ) {
         const invalidParams = new Errors.InvalidParameterError();
         Utils.validate(request.notificationId, 'notificationId')
             .setRequire()
@@ -45,7 +48,10 @@ export default class ManagerNotificationService {
         };
     }
 
-    public async deleteNotification(request: IDeleteNotificationRequest, transactionId: string | number) {
+    public async deleteNotification(
+        request: IDeleteNotificationRequest,
+        transactionId: string | number
+    ) {
         let notificationIds: Array<string> = request.notificationId;
         Logger.info(
             `${transactionId} delete notification user ${request.headers.token.userData.id} ids ${notificationIds}`
@@ -82,7 +88,9 @@ export default class ManagerNotificationService {
 
     public async queryAll(request: IQueryNotificationRequest, transactionId: string | number) {
         let userId: string = request.headers.token.userData.id;
-        Logger.info(`${transactionId} query all notification user ${userId} option ${request.option}`);
+        Logger.info(
+            `${transactionId} query all notification user ${userId} option ${request.option}`
+        );
         let now: Date = new Date();
         if (request.option == null) {
             request.option = Period.ALL;
@@ -110,8 +118,7 @@ export default class ManagerNotificationService {
                 })
                     .limit(fetchCount)
                     .skip(offset * fetchCount)
-                    .sort({ date: 'desc' })
-                    .exec();
+                    .sort({ date: 'desc' });
             case Period.WEEK:
                 return await NotificationModel.find({
                     $and: [
@@ -128,8 +135,7 @@ export default class ManagerNotificationService {
                 })
                     .limit(fetchCount)
                     .skip(offset * fetchCount)
-                    .sort({ date: 'desc' })
-                    .exec();
+                    .sort({ date: 'desc' });
             case Period.MONTH:
                 return await NotificationModel.find({
                     $and: [
@@ -146,8 +152,7 @@ export default class ManagerNotificationService {
                 })
                     .limit(fetchCount)
                     .skip(offset * fetchCount)
-                    .sort({ date: 'desc' })
-                    .exec();
+                    .sort({ date: 'desc' });
             case Period.YEAR:
                 return await NotificationModel.find({
                     $and: [
@@ -164,23 +169,24 @@ export default class ManagerNotificationService {
                 })
                     .limit(fetchCount)
                     .skip(offset * fetchCount)
-                    .sort({ date: 'desc' })
-                    .exec();
+                    .sort({ date: 'desc' });
             case Period.ALL:
                 return await NotificationModel.find({ userId: userId })
                     .limit(fetchCount)
                     .skip(offset * fetchCount)
-                    .sort({ date: 'desc' })
-                    .exec();
+                    .sort({ date: 'desc' });
         }
     }
 
-    public async countUnreadNotifications(request: IUnreadNotificationsRequest, transactionId: string | number) {
+    public async countUnreadNotifications(
+        request: IUnreadNotificationsRequest,
+        transactionId: string | number
+    ) {
         let userId: String = request.headers.token.userData.id;
         Logger.info(`${transactionId} count unread notification user ${userId}`);
         let countedUnread: number = await NotificationModel.count({
             $and: [{ userId: userId }, { isRead: false }, { deletedAt: null }],
-        }).exec();
+        });
         return {
             countedUnread: countedUnread,
         };
