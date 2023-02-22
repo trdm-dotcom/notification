@@ -1,5 +1,5 @@
 import { Inject, Service } from 'typedi';
-import { Errors, Kafka, NotificationMessage, MethodEnum, Logger} from 'common';
+import { Errors, Kafka, NotificationMessage, MethodEnum, Logger, Utils} from 'common';
 import config from '../Config';
 import SmsService from '../service/SmsService';
 import EmailService from '../service/EmailService';
@@ -37,6 +37,11 @@ export default class RequestHandler {
             let notificationMessage: NotificationMessage = jsonParser.transform(message.data, {
                 mainCreator: () => [NotificationMessage]
             });       
+            let invalidParams = new Errors.InvalidParameterError();
+            Utils.validate(notificationMessage.getTemplate(), 'template')
+                .setRequire()
+                .throwValid(invalidParams);
+            invalidParams.throwErr();
             switch(notificationMessage.getMethod()){
                 case MethodEnum.EMAIL:
                     return this.emailService.sendEmail(notificationMessage, message.transactionId);

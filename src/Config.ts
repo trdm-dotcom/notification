@@ -13,31 +13,25 @@ let Config = {
     kafkaProducerOptions: {},
     kafkaTopicOptions: {},
     requestHandlerTopics: [],
-    mongo: {
-        url: 'mongodb://localhost:27017/core',
-        options: {},
-    },
     app: {
-        template:{
-            dir: 'template/'
+        template: {
+            dir: 'template/',
         },
-        email:{
+        email: {
             host: 'smtp.gmail.com',
             port: 587,
             auth: {
                 user: process.env.EMAIL_APP,
-                pass: process.env.EMAIL_APP_PASSWORD
-            }
+                pass: process.env.EMAIL_APP_PASSWORD,
+            },
         },
     },
     firebase: {
-        authKey: 'external/homer.json'
+        authKey: 'external/homer.json',
     },
     topic: {
         otp: 'otp',
-        manager_notification: 'manager-notification',
         user_info: 'user-info',
-        push_notification: 'push-notification'
     },
     logger: {
         config: {
