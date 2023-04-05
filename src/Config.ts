@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import 'dotenv/config';
+import { Utils } from 'common';
 
 const nodeId = uuid();
 
@@ -7,7 +8,7 @@ let Config = {
     clusterId: 'notification',
     clientId: `notification-${nodeId}`,
     nodeId: nodeId,
-    kafkaUrls: ['localhost:9092'],
+    kafkaUrls: Utils.getEnvArr('ENV_KAFKA_URLS', ['localhost:9092']),
     kafkaCommonOptions: {},
     kafkaConsumerOptions: {},
     kafkaProducerOptions: {},

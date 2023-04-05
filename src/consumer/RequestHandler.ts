@@ -33,7 +33,7 @@ export default class RequestHandler {
         if (message == null || message.data == null) {
             return Promise.reject(new Errors.SystemError());
         } else {
-            Logger.info('Endpoint received message: ', message);
+            Logger.info(`Endpoint received message: ${JSON.stringify(message)}`, message);
             let notificationMessage: NotificationMessage = jsonParser.transform(message.data, {
                 mainCreator: () => [NotificationMessage]
             });       
