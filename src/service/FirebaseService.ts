@@ -14,7 +14,7 @@ export class FirebaseService {
   ) {
     Logger.info(`${transactionId} push message`);
     const jsonParser = new JsonParser();
-    let firebaseConfiguration: FirebaseConfiguration = jsonParser.transform(
+    const firebaseConfiguration: FirebaseConfiguration = jsonParser.transform(
       JSON.parse(notificationMessage.getConfiguration()),
       {
         mainCreator: () => [FirebaseConfiguration],
@@ -22,22 +22,26 @@ export class FirebaseService {
     );
     let map = new Map(Object.entries(notificationMessage.getTemplate()));
     map.forEach(async (templateData: Object, template: string = 'push_up') => {
-      let content: string | null = getTemplate(template, templateData);
-      if (!content) {
-        Logger.error(`${transactionId} NOT EXIST TEMPLATE OF ${template}`);
-        throw new Errors.GeneralError(`${transactionId} NOT EXIST TEMPLATE OF ${template}`);
+      try {
+        const content: string | null = getTemplate(template, templateData);
+        if (!content) {
+          Logger.error(`${transactionId} NOT EXIST TEMPLATE OF ${template}`);
+          throw new Errors.GeneralError(`${transactionId} NOT EXIST TEMPLATE OF ${template}`);
+        }
+        const notification = {
+          ...firebaseConfiguration.getNotification(),
+          ...{
+            body: content,
+          },
+        };
+        const message: Message = this.getObjectMessagePushNotiFirebase(
+          firebaseConfiguration,
+          notification
+        );
+        await admin.messaging().send(message);
+      } catch (err) {
+        Logger.error(`${transactionId} send push notification error`, err);
       }
-      const notification = {
-        ...firebaseConfiguration.getNotification(),
-        ...{
-          body: content,
-        },
-      };
-      const message: Message = this.getObjectMessagePushNotiFirebase(
-        firebaseConfiguration,
-        notification
-      );
-      await admin.messaging().send(message);
     });
   }
 
