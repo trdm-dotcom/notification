@@ -1,39 +1,25 @@
 import 'reflect-metadata';
 import config from './Config';
 import RequestHandler from './consumer/RequestHandler';
-import { Logger, Kafka } from 'common';
+import { Logger } from 'common';
 import { Container } from 'typedi';
-import { readFileSync } from 'fs';
 import admin from 'firebase-admin';
+import { initKafka } from './service/KafkaProducerService';
 
 Logger.create(config.logger.config, true);
 Logger.info('Starting...');
 
-function init() {
-    try {
-        Logger.info('run service notification');
-        const serviceAccount = JSON.parse(readFileSync(config.firebase.authKey, 'utf-8'));
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
-        });
-        Kafka.create(
-            config,
-            true,
-            null,
-            {
-                serviceName: config.clusterId,
-                nodeId: config.clientId,
-            },
-            config.kafkaProducerOptions,
-            {},
-            config.kafkaConsumerOptions,
-            {}
-        );
-        Container.get(RequestHandler).init();
-    } catch (error) {
-        Logger.error(error);
-        process.exit(1);
-    }
+async function run() {
+  Logger.info('run service notification');
+  initKafka();
+  const serviceAccount = require('../do-an-388906-firebase-adminsdk-7z8cg-c141586607.json');
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+  Container.get(RequestHandler).init();
 }
 
-init();
+run().catch((error) => {
+  Logger.error(error);
+  process.exit(1);
+});

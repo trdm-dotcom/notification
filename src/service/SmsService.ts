@@ -1,4 +1,4 @@
-import { Errors, NotificationMessage, Logger, SmsConfiguration } from 'common';
+import { Errors, Logger, Models } from 'common';
 import { Service } from 'typedi';
 import { getTemplate } from '../utils/Utils';
 import { JsonParser } from 'jackson-js';
@@ -7,13 +7,13 @@ import { Twilio } from 'twilio';
 
 @Service()
 export default class SmsService {
-  public sendSms(notificationMessage: NotificationMessage, transactionId: string | number) {
+  public sendSms(notificationMessage: Models.NotificationMessage, transactionId: string | number) {
     const jsonParser = new JsonParser();
     const twilio: Twilio = new Twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
-    const smsConfiguration: SmsConfiguration = jsonParser.transform(
+    const smsConfiguration: Models.SmsConfiguration = jsonParser.transform(
       JSON.parse(notificationMessage.getConfiguration()),
       {
-        mainCreator: () => [SmsConfiguration],
+        mainCreator: () => [Models.SmsConfiguration],
       }
     );
     const phoneNumber = smsConfiguration.getPhoneNumber();

@@ -1,4 +1,4 @@
-import { EmailConfiguration, Errors, NotificationMessage, Logger } from 'common';
+import { Errors, Models, Logger } from 'common';
 import { getTemplate } from '../utils/Utils';
 import { JsonParser } from 'jackson-js';
 import IEmailRequest from '../models/IEmailRequest';
@@ -8,13 +8,13 @@ import Config from '../Config';
 
 @Service()
 export default class EmailService {
-  public sendEmail(notificationMessage: NotificationMessage, transactionId: string | number) {
+  public sendEmail(notificationMessage: Models.NotificationMessage, transactionId: string | number) {
     const transporter = createTransport(Config.app.email);
     const jsonParser = new JsonParser();
-    const emailConfiguration: EmailConfiguration = jsonParser.transform(
+    const emailConfiguration: Models.EmailConfiguration = jsonParser.transform(
       JSON.parse(notificationMessage.getConfiguration()),
       {
-        mainCreator: () => [EmailConfiguration],
+        mainCreator: () => [Models.EmailConfiguration],
       }
     );
     let emailRequest: IEmailRequest = {

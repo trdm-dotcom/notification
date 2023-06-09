@@ -1,10 +1,12 @@
 import { Inject, Service } from 'typedi';
-import { Errors, Kafka, NotificationMessage, MethodEnum, Logger, Utils } from 'common';
+import { Errors, Models, Logger, Utils } from 'common';
 import config from '../Config';
 import SmsService from '../service/SmsService';
 import EmailService from '../service/EmailService';
 import { JsonParser } from 'jackson-js';
 import { FirebaseService } from '../service/FirebaseService';
+import { Kafka } from 'kafka-common';
+import { getInstance } from '../service/KafkaProducerService';
 
 @Service()
 export default class RequestHandler {
@@ -18,13 +20,10 @@ export default class RequestHandler {
   private firebaseService: FirebaseService;
 
   public init() {
-    const handle: Kafka.KafkaRequestHandler = new Kafka.KafkaRequestHandler(Kafka.getInstance());
-    Kafka.createConsumer(
-      config,
-      config.kafkaConsumerOptions,
-      config.requestHandlerTopics,
-      (message: Kafka.IKafkaMessage) => handle.handle(message, this.handleRequest),
-      config.kafkaTopicOptions
+    const handle: Kafka.KafkaRequestHandler = new Kafka.KafkaRequestHandler(getInstance());
+    new Kafka.KafkaConsumer(config).startConsumer(
+      [config.clusterId],
+      (message: Kafka.MessageSetEntry) => handle.handle(message, this.handleRequest)
     );
   }
 
@@ -34,8 +33,8 @@ export default class RequestHandler {
     if (message == null || message.data == null) {
       return Promise.reject(new Errors.SystemError());
     } else {
-      let notificationMessage: NotificationMessage = jsonParser.transform(message.data, {
-        mainCreator: () => [NotificationMessage],
+      let notificationMessage: Models.NotificationMessage = jsonParser.transform(message.data, {
+        mainCreator: () => [Models.NotificationMessage],
       });
       let invalidParams = new Errors.InvalidParameterError();
       Utils.validate(notificationMessage.getTemplate(), 'template')
@@ -43,11 +42,11 @@ export default class RequestHandler {
         .throwValid(invalidParams);
       invalidParams.throwErr();
       switch (notificationMessage.getMethod()) {
-        case MethodEnum.EMAIL:
+        case Models.MethodEnum.EMAIL:
           return this.emailService.sendEmail(notificationMessage, message.transactionId);
-        case MethodEnum.SMS:
+        case Models.MethodEnum.SMS:
           return this.smsService.sendSms(notificationMessage, message.transactionId);
-        case MethodEnum.FIREBASE:
+        case Models.MethodEnum.FIREBASE:
           return this.firebaseService.pushMessage(notificationMessage, message.transactionId);
       }
       return false;

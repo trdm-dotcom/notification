@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node build/src/index.js",
-    "start": "npm run build && node build/src/index.js",
+    "build-local": "npm run build && node build/src/index.js",
     "build": "tsc -p tsconfig.json"
   },
   "keywords": [],
@@ -20,6 +20,7 @@
     "dotenv": "^16.0.1",
     "firebase-admin": "^11.0.1",
     "jackson-js": "^1.1.0",
+    "kafka-common": "file:../kafka-common",
     "liquidjs": "^9.39.2",
     "moment": "^2.29.3",
     "nodemailer": "^6.7.7",

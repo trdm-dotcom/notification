@@ -1,23 +1,22 @@
-import { Errors, FirebaseType, Logger, NotificationMessage } from 'common';
+import { Errors, Logger, Models } from 'common';
 import { JsonParser } from 'jackson-js';
 import { Service } from 'typedi';
 import { getTemplate } from '../utils/Utils';
 import admin from 'firebase-admin';
-import { FirebaseConfiguration } from 'common';
 import { Message } from 'firebase-admin/lib/messaging/messaging-api';
 
 @Service()
 export class FirebaseService {
   public async pushMessage(
-    notificationMessage: NotificationMessage,
+    notificationMessage: Models.NotificationMessage,
     transactionId: string | number
   ) {
     Logger.info(`${transactionId} push message`);
     const jsonParser = new JsonParser();
-    const firebaseConfiguration: FirebaseConfiguration = jsonParser.transform(
+    const firebaseConfiguration: Models.FirebaseConfiguration = jsonParser.transform(
       JSON.parse(notificationMessage.getConfiguration()),
       {
-        mainCreator: () => [FirebaseConfiguration],
+        mainCreator: () => [Models.FirebaseConfiguration],
       }
     );
     let map = new Map(Object.entries(notificationMessage.getTemplate()));
@@ -46,11 +45,11 @@ export class FirebaseService {
   }
 
   private getObjectMessagePushNotiFirebase(
-    firebaseConfiguration: FirebaseConfiguration,
+    firebaseConfiguration: Models.FirebaseConfiguration,
     notification: object
   ): Message {
     switch (firebaseConfiguration.getType()) {
-      case FirebaseType.CONDITION:
+      case Models.FirebaseType.CONDITION:
         return {
           condition: firebaseConfiguration.getCondition(),
           android: firebaseConfiguration.getAndroid(),
@@ -62,7 +61,7 @@ export class FirebaseService {
             ...notification,
           },
         };
-      case FirebaseType.TOKEN:
+      case Models.FirebaseType.TOKEN:
         return {
           token: firebaseConfiguration.getToken(),
           android: firebaseConfiguration.getAndroid(),
@@ -74,7 +73,7 @@ export class FirebaseService {
             ...notification,
           },
         };
-      case FirebaseType.TOPIC:
+      case Models.FirebaseType.TOPIC:
         return {
           topic: firebaseConfiguration.getTopic(),
           android: firebaseConfiguration.getAndroid(),
