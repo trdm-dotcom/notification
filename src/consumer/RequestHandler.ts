@@ -48,8 +48,9 @@ export default class RequestHandler {
           return this.smsService.sendSms(notificationMessage, message.transactionId);
         case Models.MethodEnum.FIREBASE:
           return this.firebaseService.pushMessage(notificationMessage, message.transactionId);
+        default:
+          return false;
       }
-      return false;
     }
   };
 }
