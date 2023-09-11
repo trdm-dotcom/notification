@@ -3,7 +3,11 @@ import { JsonParser } from 'jackson-js';
 import { Service } from 'typedi';
 import { getTemplate } from '../utils/Utils';
 import admin from 'firebase-admin';
-import { Message } from 'firebase-admin/lib/messaging/messaging-api';
+import {
+  ConditionMessage,
+  MulticastMessage,
+  TopicMessage,
+} from 'firebase-admin/lib/messaging/messaging-api';
 
 @Service()
 export class FirebaseService {
@@ -33,24 +37,20 @@ export class FirebaseService {
             body: content,
           },
         };
-        const message: Message = this.getObjectMessagePushNotiFirebase(
-          firebaseConfiguration,
-          notification
-        );
-        await admin.messaging().send(message);
+        await this.doPushNotiFirebase(firebaseConfiguration, notification);
       } catch (err) {
         Logger.error(`${transactionId} send push notification error`, err);
       }
     });
   }
 
-  private getObjectMessagePushNotiFirebase(
+  private doPushNotiFirebase(
     firebaseConfiguration: Models.FirebaseConfiguration,
     notification: object
-  ): Message {
+  ): Promise<any> {
     switch (firebaseConfiguration.getType()) {
-      case Models.FirebaseType.CONDITION:
-        return {
+      case Models.FirebaseType.CONDITION: {
+        const conditionMessage: ConditionMessage = {
           condition: firebaseConfiguration.getCondition(),
           android: firebaseConfiguration.getAndroid(),
           apns: firebaseConfiguration.getApns(),
@@ -61,9 +61,11 @@ export class FirebaseService {
             ...notification,
           },
         };
-      case Models.FirebaseType.TOKEN:
-        return {
-          token: firebaseConfiguration.getToken(),
+        return admin.messaging().send(conditionMessage);
+      }
+      case Models.FirebaseType.TOKEN: {
+        const tokensMessage: MulticastMessage = {
+          tokens: firebaseConfiguration.getTokens(),
           android: firebaseConfiguration.getAndroid(),
           apns: firebaseConfiguration.getApns(),
           webpush: firebaseConfiguration.getWebpush(),
@@ -73,8 +75,10 @@ export class FirebaseService {
             ...notification,
           },
         };
-      case Models.FirebaseType.TOPIC:
-        return {
+        return admin.messaging().sendEachForMulticast(tokensMessage);
+      }
+      case Models.FirebaseType.TOPIC: {
+        const topicMessage: TopicMessage = {
           topic: firebaseConfiguration.getTopic(),
           android: firebaseConfiguration.getAndroid(),
           apns: firebaseConfiguration.getApns(),
@@ -85,6 +89,8 @@ export class FirebaseService {
             ...notification,
           },
         };
+        return admin.messaging().send(topicMessage);
+      }
       default:
         throw new Errors.InvalidFieldValueError('type', firebaseConfiguration.getType());
     }
