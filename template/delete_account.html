@@ -3,7 +3,7 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Send OTP by Email</title>
+    <title>Deleting Account</title>
 </head>
 
 <body style="background-color: #fafbfc;">
@@ -81,7 +81,7 @@
                                                                     <p
                                                                         style="margin:0;line-height:1.2;word-break:break-word;font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;font-size:16px;margin-top:0;margin-bottom:0">
                                                                         <span
-                                                                            style="font-size:16px">Dear&nbsp;Customer,</span>
+                                                                            style="font-size:16px">Dear {{name}},</span>
                                                                     </p>
                                                                 </div>
                                                             </div>
@@ -94,7 +94,7 @@
                                                                     <p
                                                                         style="margin:0;text-align:center;line-height:1.2;word-break:break-word;font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;font-size:16px;margin-top:0;margin-bottom:0">
                                                                         <span
-                                                                            style="font-size:16px">Fotei: OTP code for {% if action == "REGISTER" %}REGISTER{% elseif action == "RESET_PASSWORD" %}RESET PASSWORD{% elseif action == "VERIFY" %}VERIFY{% endif %} is {{otp}}</span>
+                                                                            style="font-size:16px">We have received your request to delete your account.</span>
                                                                     </p>
                                                                     <p
                                                                         style="margin:0;text-align:center;line-height:1.2;word-break:break-word;font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;font-size:24px;margin-top:0;margin-bottom:0">
@@ -102,16 +102,12 @@
                                                                     </p>
                                                                     <p
                                                                         style="margin:0;text-align:center;line-height:1.2;word-break:break-word;font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;font-size:16px;margin-top:0;margin-bottom:0">
-                                                                        <span style="font-size:16px">The OTP will expire in {{expiredInMinute}} minutes, Please do not share it with anyone. </span>
-                                                                    </p>
-                                                                    <p
-                                                                        style="margin:0;text-align:center;line-height:1.2;word-break:break-word;font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;font-size:16px;margin-top:0;margin-bottom:0">
-                                                                        <span style="font-size:16px">If you didn't request this, you can ignore this email.</span>
+                                                                        <span style="font-size:16px">Fotei thanks you for trusting and choosing Fotei!</span>
                                                                     </p>
                                                                     <p
                                                                         style="margin:0;text-align:center;line-height:1.2;word-break:break-word;font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;font-size:16px;margin-top:0;margin-bottom:0">
                                                                         <span
-                                                                            style="font-size:16px">Thanks!</span><br><span
+                                                                            style="font-size:16px">Sincerely,</span><br><span
                                                                             style="font-size:16px">Fotei team</span>
                                                                     </p>
                                                                 </div>
