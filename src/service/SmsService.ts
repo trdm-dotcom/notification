@@ -20,7 +20,7 @@ export default class SmsService {
     const map = new Map(Object.entries(notificationMessage.getTemplate()));
     map.forEach(async (templateData: Object, template: string) => {
       try {
-        const content: string | null = getTemplate(template, templateData);
+        const content: string | null = await getTemplate(template, templateData);
         if (content == null) {
           Logger.error(`${transactionId} NOT EXIST TEMPLATE OF ${template}`);
           throw new Errors.GeneralError(`${transactionId} NOT EXIST TEMPLATE OF ${template}`);

@@ -23,10 +23,10 @@ export class FirebaseService {
         mainCreator: () => [Models.FirebaseConfiguration],
       }
     );
-    let map = new Map(Object.entries(notificationMessage.getTemplate()));
+    const map = new Map(Object.entries(notificationMessage.getTemplate()));
     map.forEach(async (templateData: Object, template: string = 'push_up') => {
       try {
-        const content: string | null = getTemplate(template, templateData);
+        const content: string | null = await getTemplate(template, templateData);
         if (!content) {
           Logger.error(`${transactionId} NOT EXIST TEMPLATE OF ${template}`);
           throw new Errors.GeneralError(`${transactionId} NOT EXIST TEMPLATE OF ${template}`);

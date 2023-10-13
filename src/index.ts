@@ -12,7 +12,7 @@ Logger.info('Starting...');
 async function run() {
   Logger.info('run service notification');
   initKafka();
-  const serviceAccount = require('../do-an-388906-firebase-adminsdk-7z8cg-c141586607.json');
+  const serviceAccount = require('../../fotei-71604-firebase-adminsdk-ofd5j-4fea71109a.json');
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
