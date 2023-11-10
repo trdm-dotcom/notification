@@ -37,7 +37,8 @@ export class FirebaseService {
             body: content,
           },
         };
-        await this.doPushNotiFirebase(firebaseConfiguration, notification);
+        const result = await this.doPushNotiFirebase(firebaseConfiguration, notification);
+        Logger.info(`${transactionId} send push notification result`, result);
       } catch (err) {
         Logger.error(`${transactionId} send push notification error`, err);
       }
