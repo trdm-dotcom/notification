@@ -5,7 +5,7 @@ let Config = {
   clusterId: 'notification',
   clientId: `notification-${Utils.getEnvNum('ENV_NODE_ID')}`,
   nodeId: Utils.getEnvNum('ENV_NODE_ID'),
-  kafkaUrls: Utils.getEnvArr('ENV_KAFKA_URLS', ['localhost:9092']),
+  kafkaUrls: Utils.getEnvArr('ENV_KAFKA_URLS'),
   kafkaCommonOptions: {},
   kafkaConsumerOptions: {},
   kafkaProducerOptions: {},
