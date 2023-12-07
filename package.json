@@ -6,8 +6,9 @@
   "scripts": {
     "clean": "rm -rf build && mkdir build",
     "test": "node build/src/index.js",
+    "copyFcm": "cp fotei.json build ",
     "build-local": "npm run build && node build/src/index.js",
-    "build": "npm run clean && tsc -p tsconfig.json"
+    "build": "npm run clean && npm run copyFcm && tsc -p tsconfig.json"
   },
   "keywords": [],
   "author": "",

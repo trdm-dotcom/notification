@@ -2,12 +2,12 @@ import { Errors, Logger, Models } from 'common';
 import { JsonParser } from 'jackson-js';
 import { Service } from 'typedi';
 import { getTemplate } from '../utils/Utils';
-import admin from 'firebase-admin';
 import {
   ConditionMessage,
   MulticastMessage,
   TopicMessage,
 } from 'firebase-admin/lib/messaging/messaging-api';
+import { getFirebaseApp } from '..';
 
 @Service()
 export class FirebaseService {
@@ -62,7 +62,7 @@ export class FirebaseService {
             ...notification,
           },
         };
-        return admin.messaging().send(conditionMessage);
+        return getFirebaseApp().messaging().send(conditionMessage);
       }
       case Models.FirebaseType.TOKEN: {
         const tokensMessage: MulticastMessage = {
@@ -76,7 +76,7 @@ export class FirebaseService {
             ...notification,
           },
         };
-        return admin.messaging().sendEachForMulticast(tokensMessage);
+        return getFirebaseApp().messaging().sendEachForMulticast(tokensMessage);
       }
       case Models.FirebaseType.TOPIC: {
         const topicMessage: TopicMessage = {
@@ -90,7 +90,7 @@ export class FirebaseService {
             ...notification,
           },
         };
-        return admin.messaging().send(topicMessage);
+        return getFirebaseApp().messaging().send(topicMessage);
       }
       default:
         throw new Errors.InvalidFieldValueError('type', firebaseConfiguration.getType());
